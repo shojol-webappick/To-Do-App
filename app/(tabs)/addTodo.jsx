@@ -1,12 +1,13 @@
-import React from 'react'
-import { Text, View } from 'react-native'
+import React from "react";
+import { View } from "react-native";
+import TodoForm from "../../components/TodoForm";
 
 const addTodo = () => {
   return (
     <View>
-      <Text>addTodo</Text>
+      <TodoForm />
     </View>
-  )
-}
+  );
+};
 
-export default addTodo
+export default addTodo;

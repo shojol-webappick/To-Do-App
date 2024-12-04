@@ -2,37 +2,30 @@ import { useRouter } from "expo-router";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-const TodoCard = ({ title, description, priority, status,id }) => {
-const route = useRouter()
+const TodoCard = ({ title, description, priority, status, id }) => {
+  const route = useRouter();
   return (
-    <Pressable onPress={
- () => route.push({
-        name: "/singleTodo",
-        params: { id }
-      })
-    }>
-       <View style={styles.card}>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.description}>{description}</Text>
-      <View style={styles.metaContainer}>
-        <Text style={styles.priority}>
-          Priority: <Text style={{ fontWeight: "bold" }}>{priority}</Text>
-        </Text>
-        <Text
-          style={[
-            styles.status,
-            status === "todo"
-              ? styles.todo
-              : status === "in-progress"
-              ? styles.inProgress
-              : styles.done,
-          ]}
-        >
-          {status}
-        </Text>
+    <Pressable
+      onPress={() => {
+        route.push(`/4`);
+      }}>
+      <View style={styles.card}>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.description}>{description}</Text>
+        <View style={styles.metaContainer}>
+          <Text style={styles.priority}>
+            Priority: <Text style={{ fontWeight: "bold" }}>{priority}</Text>
+          </Text>
+          <Text
+            style={[
+              styles.status,
+              status === "todo" ? styles.todo : status === "in-progress" ? styles.inProgress : styles.done,
+            ]}>
+            {status}
+          </Text>
+        </View>
       </View>
-    </View>
-   </Pressable>
+    </Pressable>
   );
 };
 
