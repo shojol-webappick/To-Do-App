@@ -1,13 +1,13 @@
 import { useRouter } from "expo-router";
-import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 const TodoCard = ({ title, description, priority, status, id }) => {
-  const route = useRouter();
+  const router = useRouter();
+
   return (
     <Pressable
       onPress={() => {
-        route.push(`/4`);
+        router.push(`/singleTodo/${id}`);
       }}>
       <View style={styles.card}>
         <Text style={styles.title}>{title}</Text>

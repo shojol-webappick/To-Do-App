@@ -11,9 +11,9 @@ const HomeLayout = () => {
         }}
       />
       <Stack.Screen
-        name="[id]"
+        name="singleTodo/[id]"
         options={{
-          headerShown: false,
+          headerTitle: "Details",
         }}
       />
     </Stack>
