@@ -1,17 +1,19 @@
 import { useFocusEffect } from "expo-router";
 import React, { useState } from "react";
 import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import EmptyPage from "../../components/EmptyPage";
 import TodoCard from "../../components/TodoCard";
 import { getAllTodos } from "../../utils/DBOperations";
 
 const allList = () => {
   const [list, setList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefresh, setIsRefresh] = useState(true);
 
   useFocusEffect(
     React.useCallback(() => {
       fetchAndSortTodos();
-    }, [])
+    }, [isRefresh])
   );
 
   const fetchAndSortTodos = async () => {
@@ -35,12 +37,15 @@ const allList = () => {
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <View style={{ backgroundColor: "#fff", height: "100%", width: "100%" }}>
-          <Text style={styles.header}>Today's Work</Text>
+          <Text style={styles.header}>{list.length > 0 ? "Your All To-Do's" : ""}</Text>
           <FlatList
+            ListEmptyComponent={<EmptyPage />}
             keyExtractor={(item) => item.id.toString()}
             data={list}
             renderItem={({ item }) => (
               <TodoCard
+                setIsRefresh={setIsRefresh}
+                refreshing={isRefresh}
                 id={item.id}
                 title={item.title}
                 description={item.description}

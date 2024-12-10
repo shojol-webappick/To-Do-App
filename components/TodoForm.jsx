@@ -1,65 +1,83 @@
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { createTable, insertTodo } from "../utils/DBOperations";
+import { createTable, insertTodo, updateTodo } from "../utils/DBOperations";
 import PriorityField from "./PriorityField";
 
-const TodoForm = () => {
-  const [title, setTitle] = useState("");
+const TodoForm = ({ todo = {} }) => {
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("");
-
+  const [status, setStatus] = useState("todo");
+  const [title, setTitle] = useState("");
+  const [id, setId] = useState(null);
   const router = useRouter();
+
+  useEffect(() => {
+    if (todo?.title) {
+      setTitle(todo.title);
+      setDescription(todo.description);
+      setPriority(todo.priority);
+      setStatus(todo.status);
+      setId(todo.id);
+    }
+  }, [todo]);
 
   useEffect(() => {
     createTable();
   }, []);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!title || !description || !priority) {
       alert("Please fill in all the fields!");
       return;
     }
 
     const currentDate = new Date();
-    const createdDate = currentDate.toLocaleDateString();
-    const createdTime = currentDate.toLocaleTimeString();
-    const updatedDate = currentDate.toLocaleDateString();
-    const updatedTime = currentDate.toLocaleTimeString();
 
-    const newTodo = {
-      id: toString(Math.floor(Math.random() * 1000) + 1),
-      title,
-      description,
-      priority,
-      status: "in-progress",
-      createdDate,
-      updatedDate,
-      createdTime,
-      updatedTime,
-    };
+    if (id) {
+      const updatedData = {
+        title,
+        description,
+        priority,
+        status,
+        updatedDate: currentDate.toLocaleDateString(),
+        updatedTime: currentDate.toLocaleTimeString(),
+      };
+      await updateTodo(id, updatedData);
+      alert("Todo updated successfully!");
+    } else {
+      const createdDate = currentDate.toLocaleDateString();
+      const createdTime = currentDate.toLocaleTimeString();
+      const newTodo = {
+        title,
+        description,
+        priority,
+        status: "todo",
+        createdDate,
+        updatedDate: createdDate,
+        createdTime,
+        updatedTime: createdTime,
+      };
+      await insertTodo(newTodo);
+      alert("Todo added successfully!");
+    }
 
-    insertTodo(newTodo);
-    alert("Todo added successfully!");
     setTitle("");
     setDescription("");
     setPriority("");
-    router.push("/allTodos");
+    setStatus("todo");
+    setId(null);
+
+    router.push("/");
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>Add New Todo</Text>
+      <Text style={styles.header}>{id ? "Edit Todo" : "Add New Todo"}</Text>
 
       <View style={styles.formGroup}>
         <Text style={styles.label}>Title</Text>
-        <TextInput
-          keyboardType="default"
-          style={styles.input}
-          placeholder="Enter Todo title"
-          value={title}
-          onChangeText={setTitle}
-        />
+        <TextInput style={styles.input} placeholder="Enter Todo title" value={title} onChangeText={setTitle} />
       </View>
 
       <View style={styles.formGroup}>
@@ -79,7 +97,7 @@ const TodoForm = () => {
       </View>
 
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.submitButtonText}>Add Todo</Text>
+        <Text style={styles.submitButtonText}>{id ? "Update Todo" : "Add Todo"}</Text>
       </TouchableOpacity>
     </ScrollView>
   );

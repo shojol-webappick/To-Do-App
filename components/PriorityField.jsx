@@ -11,7 +11,7 @@ const PriorityField = ({ priority, setPriority }) => {
 
   return (
     <DropDown
-      placeholder="Select an To-Do Priority"
+      placeholder="Select Priority for To-Do "
       open={open}
       items={items}
       value={priority}

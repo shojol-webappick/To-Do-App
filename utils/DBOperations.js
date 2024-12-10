@@ -98,30 +98,30 @@ export const deleteTodo = async (id) => {
   try {
     const db = await openDatabase();
     const result = await db.runAsync(`DELETE FROM todos WHERE id = ?`, [id]);
+    return { delete: "success" };
   } catch (error) {
     console.error("Error deleting todo:", error);
   }
 };
 
-// Example of updating a todo
-export const updateExample = async () => {
-  const todoId = 1;
-  const updatedData = {
-    title: "Updated Todo Title",
-    description: "Updated Description",
-    priority: "medium",
-    status: "in-progress",
-    updatedDate: new Date().toLocaleDateString(),
-    updatedTime: new Date().toLocaleTimeString(),
-  };
+export const updateStatus = async (id, status) => {
+  try {
+    const db = await openDatabase();
+    const updatedDate = new Date().toLocaleDateString();
+    const updatedTime = new Date().toLocaleTimeString();
+    console.log(id, status);
+    const result = await db.runAsync(`UPDATE todos SET status = ?, updatedDate = ?, updatedTime = ? WHERE id = ?`, [
+      status,
+      updatedDate,
+      updatedTime,
+      id,
+    ]);
 
-  await updateTodo(todoId, updatedData);
-};
-
-// Example of deleting a todo
-export const deleteExample = async () => {
-  const todoId = 1; // Example ID to delete
-  await deleteTodo(todoId);
+    console.log("Status updated successfully:", result);
+    return result;
+  } catch (error) {
+    console.error("Error updating status:", error);
+  }
 };
 
 export const getAllTodos = async () => {

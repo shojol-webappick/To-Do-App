@@ -1,16 +1,17 @@
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { getSingleTodo } from "../../../../utils/DBOperations";
+import { deleteTodo, getSingleTodo } from "../../../../utils/DBOperations";
 
 const SingleTodo = () => {
-  const { id } = useLocalSearchParams();
   const [singleTodo, setSingleTodo] = useState();
+  const { id } = useLocalSearchParams();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchTodo = async () => {
-      const fetchedTodo = await getSingleTodo(id); // Get the todo by id
-      setSingleTodo(fetchedTodo); // Set the todo data in state
+      const fetchedTodo = await getSingleTodo(id);
+      setSingleTodo(fetchedTodo);
     };
 
     fetchTodo();
@@ -32,7 +33,14 @@ const SingleTodo = () => {
     "in-progress": styles.inProgressStatus,
     done: styles.doneStatus,
   };
-
+  const handleActions = (status, id) => {
+    if (status === "done") {
+      deleteTodo(id);
+      alert("Todo deleted successfully");
+    } else {
+      router.push(`/addTodo/${id}`);
+    }
+  };
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>Todo Details</Text>
@@ -60,7 +68,7 @@ const SingleTodo = () => {
 
       <TouchableOpacity
         style={status == "done" ? styles.deleteButton : styles.button}
-        onPress={() => alert("Edit Todo")}>
+        onPress={() => handleActions(status, id)}>
         {status == "done" ? (
           <Text style={styles.buttonText}>Delete Todo</Text>
         ) : (

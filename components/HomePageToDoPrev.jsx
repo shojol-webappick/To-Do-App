@@ -2,16 +2,18 @@ import { useFocusEffect } from "expo-router";
 import React, { useState } from "react";
 import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { getAllTodos } from "../utils/DBOperations.js";
+import EmptyPage from "./EmptyPage.jsx";
 import TodoCard from "./TodoCard";
 
 const HomePageToDoPrev = () => {
   const [list, setList] = useState([]);
+  const [isRefresh, setIsRefresh] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
 
   useFocusEffect(
     React.useCallback(() => {
       fetchAndSortTodos();
-    }, [])
+    }, [isRefresh])
   );
 
   const date = new Date();
@@ -41,21 +43,26 @@ const HomePageToDoPrev = () => {
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <View style={{ backgroundColor: "#fff", height: "100%", width: "100%" }}>
-          <Text style={styles.header}>Today's Work</Text>
-          <FlatList
-            keyExtractor={(item) => item.id.toString()}
-            data={list}
-            renderItem={({ item }) => (
-              <TodoCard
-                id={item.id}
-                title={item.title}
-                description={item.description}
-                priority={item.priority}
-                status={item.status}
-                createdDate={item.createdDate}
-              />
-            )}
-          />
+          <>
+            <Text style={styles.header}>Today's Work</Text>
+            <FlatList
+              ListEmptyComponent={<EmptyPage />}
+              keyExtractor={(item) => item.id.toString()}
+              data={list}
+              renderItem={({ item }) => (
+                <TodoCard
+                  setIsRefresh={setIsRefresh}
+                  refreshing={isRefresh}
+                  id={item.id}
+                  title={item.title}
+                  description={item.description}
+                  priority={item.priority}
+                  status={item.status}
+                  createdDate={item.createdDate}
+                />
+              )}
+            />
+          </>
         </View>
       </SafeAreaView>
     );
